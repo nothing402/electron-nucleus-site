@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electron to Nucleus Scale</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      color: white;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      font-family: Arial, sans-serif;
+      white-space: nowrap;
+    }
+
+    .progress-bar-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background-color: #333;
+      z-index: 10;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: lime;
+      width: 0%;
+    }
+
+    .progress-text {
+      position: fixed;
+      top: 12px;
+      left: 10px;
+      font-size: 14px;
+      z-index: 10;
+    }
+
+    .attometer-text {
+      position: fixed;
+      top: 12px;
+      right: 10px;
+      font-size: 14px;
+      z-index: 10;
+    }
+
+    .container {
+      position: relative;
+      height: 100vh;
+    }
+
+    .electron {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      background-color: cyan;
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    .electron-label {
+      position: absolute;
+      top: calc(50% - 7px);
+      left: 5px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .electron-label svg {
+      width: 10px;
+      height: 10px;
+    }
+
+    
+
+    
+
+    .scroll-distance-label::before {
+      left: -160px;
+    }
+
+    .scroll-distance-label::after {
+      right: -160px;
+    }
+
+    .nucleus {
+      position: absolute;
+      left: 17894398px;
+      top: 50%;
+      width: 1500px;
+      height: 10000px;
+      background-color: red;
+      border-top-left-radius: 5000px;
+      border-bottom-left-radius: 5000px;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    .nucleus-label {
+      position: absolute;
+      left: calc(17894398px + 100px);
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(0deg);
+      transform-origin: center;
+      font-size: 16px;
+      color: black;
+      font-weight: bold;
+      z-index: 2;
+      writing-mode: unset;
+    }
+
+    .arrival-text {
+      position: absolute;
+      left: calc(17894398px - 200px);
+      top: 40%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 3;
+    }
+
+    .halfway-text {
+      position: absolute;
+      left: 8946559px;
+      top: 40%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="progress-text" id="progressText">0%</div>
+    <div class="attometer-text" id="attometerText">0 attometers</div>
+  </div>
+
+  <div class="container" id="container">
+    <div class="electron" id="electron"></div>
+    <div class="electron-label">
+      <svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="0,5 10,0 10,10" fill="white"/>
+      </svg>
+      Electron
+    </div>
+
+        <div class="nucleus" id="nucleus"></div>
+    <div class="nucleus-label" id="nucleusLabel">nucleus</div>
+    <div class="arrival-text">You finally made it!</div>
+    <div class="halfway-text">Half way, keep going!</div>
+  </div>
+
+  <script>
+    const electronStart = 5;
+    const nucleusStart = 17894403;
+    const nucleusVisiblePortion = 500;
+    const viewWidth = window.innerWidth;
+    const container = document.getElementById('container');
+
+    container.style.width = `${nucleusStart + nucleusVisiblePortion + viewWidth}px`;
+
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const attometerText = document.getElementById('attometerText');
+
+    window.addEventListener('scroll', () => {
+      const scrollLeft = window.scrollX;
+      const targetViewStart = nucleusStart - viewWidth;
+      const distanceScrolled = Math.max(0, scrollLeft - electronStart);
+      const totalDistance = targetViewStart - electronStart;
+      const percent = Math.min(100, (distanceScrolled / totalDistance) * 100);
+      const attometers = Math.min(distanceScrolled, totalDistance).toLocaleString();
+      progressBar.style.width = `${percent}%`;
+      progressText.textContent = `${percent.toFixed(6)}%`;
+      attometerText.textContent = `${attometers} attometers`;
+    });
+
+    window.scrollTo(0, 0);
+  </script>
+
+</body>
+</html>
